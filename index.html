@@ -1610,10 +1610,20 @@ var DATA = {
 /* 链接参数：?to=姓名&title=学长&from=送信人 */
 (function(){
   try {
-    var q = new URLSearchParams(location.search);
-    var to = (q.get('to') || q.get('name') || '').trim().slice(0, 20);
-    var title = (q.get('title') || q.get('type') || '').trim();
-    var from = (q.get('from') || q.get('sender') || '').trim().slice(0, 10);
+    var raw = (location.search || '').replace(/^\?/, '');
+    var q = {};
+    if (raw) {
+      raw.split('&').forEach(function(kv){
+        var i = kv.indexOf('=');
+        if (i < 0) return;
+        var k = kv.slice(0, i), v = kv.slice(i + 1);
+        try { v = decodeURIComponent(v.replace(/\+/g, ' ')); } catch (e) {}
+        q[k] = v;
+      });
+    }
+    var to = (q.to || q.name || '').trim().slice(0, 20);
+    var title = (q.title || q.type || '').trim();
+    var from = (q.from || q.sender || '').trim().slice(0, 10);
     if (title !== '学长' && title !== '学姐') title = '';
     if (from){
       DATA.paragraphs = DATA.paragraphs.map(function(p){
