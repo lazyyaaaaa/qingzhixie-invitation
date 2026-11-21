@@ -1607,13 +1607,19 @@ var DATA = {
   date: "2026年X月X日"
 };
 
-/* 链接参数：?to=姓名&title=学长 或 ?to=姓名&title=学姐 */
+/* 链接参数：?to=姓名&title=学长&from=送信人 */
 (function(){
   try {
     var q = new URLSearchParams(location.search);
     var to = (q.get('to') || q.get('name') || '').trim().slice(0, 20);
     var title = (q.get('title') || q.get('type') || '').trim();
+    var from = (q.get('from') || q.get('sender') || '').trim().slice(0, 10);
     if (title !== '学长' && title !== '学姐') title = '';
+    if (from){
+      DATA.paragraphs = DATA.paragraphs.map(function(p){
+        return p.split('XXX').join(from);
+      });
+    }
     if (!to) return;
     DATA.to = 'To ' + to + (title ? ' ' + title : '');
     DATA.salutation = '亲爱的' + to + (title || '学长/学姐') + '：';
