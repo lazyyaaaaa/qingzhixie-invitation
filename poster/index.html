@@ -534,16 +534,43 @@
     aspect-ratio:1300/1819;
     height:auto !important;
     max-height:88vh;
-    padding:0 !important;
+    padding:0 0 10px !important;
     background:#fff !important;
     border-radius:8px !important;
     overflow:hidden;
   }
   .card::before,.card::after{display:none !important;}
   .card .content,.card .crease{display:none !important;}
-  .letter-img{display:block;width:100%;height:100%;object-fit:contain;background:#fff;}
+  .letter-img{display:block;width:100%;flex:1 1 auto;min-height:0;height:auto;object-fit:contain;background:#fff;}
   @media (max-width:560px){
     .unfold,.card{width:92vw !important;max-height:82vh;}
+  }
+
+  /* ===== 底部返回按钮 ===== */
+  .back-btn{
+    position:fixed;
+    left:50%;
+    bottom:calc(16px + env(safe-area-inset-bottom, 0px));
+    transform:translateX(-50%);
+    z-index:40;
+    display:inline-flex;align-items:center;gap:6px;
+    padding:9px 20px;
+    border-radius:999px;
+    border:1px solid rgba(90,130,95,.35);
+    background:rgba(255,255,255,.82);
+    -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
+    color:#3f6b45;
+    font:400 14px/1 "Songti SC","STSong","SimSun",serif;
+    letter-spacing:.06em;
+    cursor:pointer;
+    box-shadow:0 6px 18px -8px rgba(30,60,35,.45);
+    transition:background .2s ease, transform .2s ease;
+  }
+  .back-btn:hover{background:#fff;}
+  .back-btn:active{transform:translateX(-50%) scale(.97);}
+  .back-btn:focus-visible{outline:2px solid rgba(90,150,100,.7);outline-offset:3px;}
+  @media (max-width:560px){
+    .back-btn{bottom:calc(12px + env(safe-area-inset-bottom, 0px));padding:8px 18px;font-size:13px;}
   }
 </style>
 
@@ -2078,6 +2105,24 @@ if (location.hash === '#open') open();
   var tr = document.createElement('span'); tr.className = 'branch branch--tr'; tr.setAttribute('aria-hidden','true'); tr.innerHTML = art;
   var bl = document.createElement('span'); bl.className = 'branch branch--bl'; bl.setAttribute('aria-hidden','true'); bl.innerHTML = art;
   content.appendChild(tr); content.appendChild(bl);
+})();
+</script>
+
+<button class="back-btn" id="backBtn" type="button" aria-label="返回">
+  <span aria-hidden="true">←</span> 返回
+</button>
+<script>
+(function(){
+  var btn = document.getElementById('backBtn');
+  if (!btn) return;
+  btn.addEventListener('click', function(e){
+    e.stopPropagation();
+    if (window.history.length > 1) {
+      window.history.back();
+    } else {
+      window.location.href = 'https://lazyyaaaaa.github.io/qingzhixie-invitation/';
+    }
+  });
 })();
 </script>
 </body>
