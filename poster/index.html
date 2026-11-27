@@ -555,7 +555,7 @@
   .card{
     width:min(76vw, 540px, calc((100vh - 96px) * 0.7147)) !important;
     height:auto !important;max-height:none;
-    padding:0 0 8px !important;background:#fdfefb !important;
+    padding:0 !important;background:#fdfefb !important;
     border-radius:8px !important;overflow:hidden;
   }
   .card::before,.card::after{display:none !important;}
@@ -570,6 +570,18 @@
     white-space:nowrap;z-index:3;
   }
   @media (max-width:560px){ .unfold,.card{width:min(92vw, calc((100vh - 80px) * 0.7147)) !important;max-height:none;} }
+
+  .card .close{
+    position:absolute !important;
+    left:50% !important;
+    bottom:12px !important;
+    margin:0 !important;
+    transform:translateX(-50%);
+    z-index:6;
+    background:rgba(253,254,251,.92) !important;
+    -webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);
+    box-shadow:0 4px 12px -6px rgba(40,70,45,.35);
+  }
 </style>
 
 </head>
