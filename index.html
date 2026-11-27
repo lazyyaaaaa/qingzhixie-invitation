@@ -2001,6 +2001,26 @@ if (bgm && musicBtn){
   bgm.addEventListener('pause', syncMusicUI);
   musicBtn.addEventListener('click', function(e){ e.stopPropagation(); toggleMusic(); });
   syncMusicUI();
+
+  // 打开页面就尝试播放；被浏览器拦下时，等第一次交互再播
+  var gestureArmed = false;
+  function armGesture(){
+    if (gestureArmed) return;
+    gestureArmed = true;
+    var start = function(){ if (bgm.paused) bgm.play().catch(function(){}); };
+    ['pointerdown', 'touchstart', 'keydown', 'wheel'].forEach(function(ev){
+      document.addEventListener(ev, start, { once: true, passive: true });
+    });
+  }
+  function tryAutoplay(){
+    if (!bgm.paused) return;
+    var p = bgm.play();
+    if (p && p.catch) p.catch(function(){ armGesture(); });
+  }
+  window.addEventListener('load', function(){ setTimeout(tryAutoplay, 200); });
+  document.addEventListener('visibilitychange', function(){
+    if (!document.hidden && bgm.paused && !gestureArmed) tryAutoplay();
+  });
 }
 
 envTilt.addEventListener('click', function(){
