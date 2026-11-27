@@ -550,27 +550,11 @@
   .card{background:#fdfefb !important;}
   .unfold.fading{opacity:0 !important;transition:opacity .35s ease !important;}
 
-  /* ===== 展开到出字：影子 + 分层显影 ===== */
-  @keyframes cardIn{from{opacity:.07;}to{opacity:1;}}
-  .wrap.ghost .card{display:flex !important;opacity:.07;}
-  .wrap.ghost .card .content > *{animation:none !important;}
-  .wrap.ghost .tilt{position:relative;z-index:3;}
-  .wrap.ghost .unfold{z-index:1;}
 
-  .wrap.ready .card .content{animation:none !important;}
-  .wrap.ready .card .content > *{animation:contentIn .7s cubic-bezier(.2,.8,.25,1) both;}
-  .wrap.ready .card .content > #body{animation:none !important;}
-  .wrap.ready .card .content > .letter-head{animation-delay:.05s;}
-  .wrap.ready .card .content > .rule{animation-delay:.14s;}
-  .wrap.ready .card .content > #body p:nth-child(1){animation-delay:.18s;}
-  .wrap.ready .card .content > #body p:nth-child(2){animation-delay:.26s;}
-  .wrap.ready .card .content > #body p:nth-child(3){animation-delay:.34s;}
-  .wrap.ready .card .content > #body p:nth-child(4){animation-delay:.42s;}
-  .wrap.ready .card .content > #body p:nth-child(5){animation-delay:.50s;}
-  .wrap.ready .card .content > #body p:nth-child(6){animation-delay:.58s;}
-  .wrap.ready .card .content > .sign{animation-delay:.66s;}
-  .wrap.ready .card .content > .letter-band{animation-delay:.76s;}
-  .wrap.ready .card .content > .branch{animation:none !important;opacity:.85;}
+  /* ===== 信纸与信封顶边对齐 ===== */
+  .wrap{--lift:0px;}
+  .card{transform:translateY(var(--lift));}
+  .unfold{translate:-50% calc(-50% + var(--lift));}
 
   /* ===== 海报信纸版 ===== */
   .unfold{width:min(76vw, 540px, calc((100vh - 96px) * 0.7147)) !important;aspect-ratio:1300/1819;height:auto !important;max-height:none;}
@@ -598,7 +582,7 @@
     -webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);
     box-shadow:0 4px 12px -6px rgba(40,70,45,.35);
   }
-  @keyframes posterIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:none;}}
+  @keyframes posterIn{from{opacity:0;}to{opacity:1;}}
   .wrap.ready .card{animation:posterIn .9s cubic-bezier(.2,.8,.25,1) both !important;}
   .wrap.ghost .card{opacity:0 !important;}
   @media (max-width:560px){ .unfold,.card{width:min(92vw, calc((100vh - 80px) * 0.7147)) !important;max-height:none;} }
@@ -1975,10 +1959,10 @@ function open(){
     wrap.classList.add('show');
     var uf = document.getElementById('unfold');
     if (uf) uf.classList.add('show');
-    setTimeout(function(){ wrap.classList.add('ghost'); }, 960);
+    setTimeout(function(){ if (window.__alignLetter) window.__alignLetter(); }, 30);
     setTimeout(function(){
-      wrap.classList.remove('ghost');
       wrap.classList.add('ready');
+      if (window.__alignLetter) window.__alignLetter();
       startFireworks();
       build();
       fitText();
@@ -1988,7 +1972,7 @@ function open(){
         uf.classList.add('fading');
         setTimeout(function(){ uf.classList.remove('show'); uf.classList.remove('fading'); }, 350);
       }, 120);
-    }, 1300);
+    }, 1080);
   }, 700);
 }
 
@@ -2165,6 +2149,36 @@ if (location.hash === '#open') open();
   var tr = document.createElement('span'); tr.className = 'branch branch--tr'; tr.setAttribute('aria-hidden','true'); tr.innerHTML = art;
   var bl = document.createElement('span'); bl.className = 'branch branch--bl'; bl.setAttribute('aria-hidden','true'); bl.innerHTML = art;
   content.appendChild(tr); content.appendChild(bl);
+})();
+</script>
+
+<script>
+(function(){
+  var wrap = document.getElementById('wrap');
+  var env = document.getElementById('env');
+  var unfold = document.getElementById('unfold');
+  if (!wrap || !env) return;
+
+  function computeLift(){
+    if (!wrap.classList.contains('show')) return;
+    var h = unfold ? unfold.offsetHeight : (document.getElementById('card') || {}).offsetHeight;
+    if (!h) return;
+    var wr = wrap.getBoundingClientRect();
+    var cs = getComputedStyle(wrap);
+    var p1 = parseFloat(cs.paddingTop) || 0;
+    var p2 = parseFloat(cs.paddingBottom) || 0;
+    var centerTop = wr.top + p1 + (wr.height - p1 - p2 - h) / 2;
+    var envTop = env.getBoundingClientRect().top;
+    var lift = envTop - centerTop;
+    if (Math.abs(lift) > 0.5) wrap.style.setProperty('--lift', lift.toFixed(1) + 'px');
+    else wrap.style.removeProperty('--lift');
+  }
+
+  window.__alignLetter = computeLift;
+  if (document.readyState === 'complete') {
+    // 已有 open 逻辑会在打开时调用
+  }
+  window.addEventListener('resize', function(){ setTimeout(computeLift, 60); });
 })();
 </script>
 
