@@ -550,27 +550,6 @@
   .card{background:#fdfefb !important;}
   .unfold.fading{opacity:0 !important;transition:opacity .35s ease !important;}
 
-  /* ===== 展开到出字：影子 + 分层显影 ===== */
-  @keyframes cardIn{from{opacity:.07;}to{opacity:1;}}
-  .wrap.ghost .card{display:flex !important;opacity:.07;}
-  .wrap.ghost .card .content > *{animation:none !important;}
-  .wrap.ghost .tilt{position:relative;z-index:3;}
-  .wrap.ghost .unfold{z-index:1;}
-
-  .wrap.ready .card .content{animation:none !important;}
-  .wrap.ready .card .content > *{animation:contentIn .7s cubic-bezier(.2,.8,.25,1) both;}
-  .wrap.ready .card .content > #body{animation:none !important;}
-  .wrap.ready .card .content > .letter-head{animation-delay:.05s;}
-  .wrap.ready .card .content > .rule{animation-delay:.14s;}
-  .wrap.ready .card .content > #body p:nth-child(1){animation-delay:.18s;}
-  .wrap.ready .card .content > #body p:nth-child(2){animation-delay:.26s;}
-  .wrap.ready .card .content > #body p:nth-child(3){animation-delay:.34s;}
-  .wrap.ready .card .content > #body p:nth-child(4){animation-delay:.42s;}
-  .wrap.ready .card .content > #body p:nth-child(5){animation-delay:.50s;}
-  .wrap.ready .card .content > #body p:nth-child(6){animation-delay:.58s;}
-  .wrap.ready .card .content > .sign{animation-delay:.66s;}
-  .wrap.ready .card .content > .letter-band{animation-delay:.76s;}
-  .wrap.ready .card .content > .branch{animation:none !important;opacity:.85;}
 </style>
 
 </head>
@@ -1939,9 +1918,7 @@ function open(){
     wrap.classList.add('show');
     var uf = document.getElementById('unfold');
     if (uf) uf.classList.add('show');
-    setTimeout(function(){ wrap.classList.add('ghost'); }, 960);
     setTimeout(function(){
-      wrap.classList.remove('ghost');
       wrap.classList.add('ready');
       startFireworks();
       build();
@@ -1952,7 +1929,7 @@ function open(){
         uf.classList.add('fading');
         setTimeout(function(){ uf.classList.remove('show'); uf.classList.remove('fading'); }, 350);
       }, 120);
-    }, 1300);
+    }, 1080);
   }, 700);
 }
 
