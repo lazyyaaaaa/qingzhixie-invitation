@@ -556,6 +556,9 @@
   .card{transform:translateY(var(--lift));}
   .unfold{translate:-50% calc(-50% + var(--lift));}
 
+  /* ===== 整体上移 20px ===== */
+  .stage{transform:translateY(-20px);}
+
   /* ===== 海报信纸版 ===== */
   .unfold{width:min(76vw, 540px, calc((100vh - 96px) * 0.7147)) !important;aspect-ratio:1300/1819;height:auto !important;max-height:none;}
   .card{
@@ -2159,6 +2162,7 @@ if (location.hash === '#open') open();
   var unfold = document.getElementById('unfold');
   if (!wrap || !env) return;
 
+  var envBaseTop = null;
   function computeLift(){
     if (!wrap.classList.contains('show')) return;
     var h = unfold ? unfold.offsetHeight : (document.getElementById('card') || {}).offsetHeight;
@@ -2168,7 +2172,8 @@ if (location.hash === '#open') open();
     var p1 = parseFloat(cs.paddingTop) || 0;
     var p2 = parseFloat(cs.paddingBottom) || 0;
     var centerTop = wr.top + p1 + (wr.height - p1 - p2 - h) / 2;
-    var envTop = env.getBoundingClientRect().top;
+    if (!wrap.classList.contains('show')) envBaseTop = env.getBoundingClientRect().top;
+    var envTop = (envBaseTop !== null) ? envBaseTop : env.getBoundingClientRect().top;
     var lift = envTop - centerTop;
     if (Math.abs(lift) > 0.5) wrap.style.setProperty('--lift', lift.toFixed(1) + 'px');
     else wrap.style.removeProperty('--lift');
@@ -2178,7 +2183,15 @@ if (location.hash === '#open') open();
   if (document.readyState === 'complete') {
     // 已有 open 逻辑会在打开时调用
   }
-  window.addEventListener('resize', function(){ setTimeout(computeLift, 60); });
+  function recordBase(){
+    if (!wrap.classList.contains('show')) envBaseTop = env.getBoundingClientRect().top;
+  }
+  recordBase();
+  window.addEventListener('load', recordBase);
+  window.addEventListener('resize', function(){
+    if (!wrap.classList.contains('show')) recordBase();
+    setTimeout(computeLift, 60);
+  });
 })();
 </script>
 
